@@ -1,5 +1,5 @@
 // config/correoConfig.js
-
+require('dotenv').config();
 // URL base de la API del servicio de correo
 const CORREO_API_URL = process.env.CORREO_API_URL; // <- cambia esto por la URL real
 

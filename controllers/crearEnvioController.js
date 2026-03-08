@@ -4,8 +4,8 @@ const guardarPDF = require("../utils/guardarPDF");
 
 async function crearEnvio(req, res) {
   try {
-
-    const { destinatario, direccion, ciudad, codigoPostal, peso } = req.body;
+    // Recibimos también los productos
+    const { destinatario, direccion, ciudad, codigoPostal, peso, productos } = req.body;
 
     const envioData = {
       destinatario,
@@ -15,33 +15,28 @@ async function crearEnvio(req, res) {
       peso,
       servicio: "paquete_estandar"
     };
-//asi se usa en correo argentino
-/*     const response = await axios.post(`${CORREO_API_URL}/crear-envio`, envioData, {
-      headers: {
-        "Authorization": `Bearer ${API_KEY}`,
-        "Content-Type": "application/json"
-      }
-    }); */
 
-    //es para desarroyo 
-
+    // En desarrollo / Shipit
     const response = await axios.post(`${CORREO_API_URL}/shipments`, envioData, {
-  headers: {
-    "X-Shipit-Email": "tu-correo@ejemplo.com",
-    "X-Shipit-Access-Token": API_KEY,
-    "Content-Type": "application/json",
-    "Accept": "application/vnd.shipit.v2"
-  }
-});
+      headers: {
+        "X-Shipit-Email": "tu-correo@ejemplo.com",
+        "X-Shipit-Access-Token": API_KEY,
+        "Content-Type": "application/json",
+        "Accept": "application/vnd.shipit.v2"
+      }
+    });
 
     const { numeroSeguimiento, etiqueta } = response.data;
 
-    //const archivoEtiqueta = guardarPDF(etiqueta, numeroSeguimiento);
+    // Guardamos la etiqueta si es necesario
+    // const archivoEtiqueta = guardarPDF(etiqueta, numeroSeguimiento);
 
+    // Respondemos incluyendo los productos
     res.json({
       ok: true,
       numeroSeguimiento,
-      //archivoEtiqueta
+      // archivoEtiqueta,
+      productos // <-- enviamos todos los productos comprados
     });
 
   } catch (error) {
