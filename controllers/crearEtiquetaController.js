@@ -1,16 +1,14 @@
 const axios = require("axios");
 
-const crearEnvio = async (req, res) => {
+const comprarEtiqueta = async (req, res) => {
   try {
-    const { reference, address_from, address_to, parcels } = req.body;
+    const { rate_id } = req.body;
 
     const response = await axios.post(
-      "https://api.goshippo.com/shipments",
+      `https://api.goshippo.com/transactions`,
       {
-        reference,
-        address_from,
-        address_to,
-        parcels,
+        rate: rate_id,
+        label_file_type: "PDF",  // También puede ser PNG
         async: false
       },
       {
@@ -21,13 +19,13 @@ const crearEnvio = async (req, res) => {
       }
     );
 
-    console.log("Envío creado:", response.data);
+    console.log("Etiqueta generada:", response.data);
     res.status(201).json(response.data);
 
   } catch (error) {
-    console.error("Error creando envío:", error.response?.data || error.message);
+    console.error("Error generando etiqueta:", error.response?.data || error.message);
     res.status(500).json({ error: error.response?.data || error.message });
   }
 };
 
-module.exports = { crearEnvio };
+module.exports = { comprarEtiqueta };
